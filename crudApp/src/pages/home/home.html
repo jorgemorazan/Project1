@@ -1,0 +1,68 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      
+      <ion-item class="item item-trns text-center">
+          My Social App
+        <ion-avatar item-end *ngIf="afAuth.authState | async">
+          <img src={{currentUser.photoURL}}>
+        </ion-avatar>
+      </ion-item>
+      
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+    <div *ngIf="afAuth.authState | async as user; else showLogin">
+        <h1>Hello {{ user.displayName }}!</h1>
+        <button ion-button color="dark"(click)="logout()">Logout</button>
+        <ion-searchbar (ionInput)="onInput($event)"></ion-searchbar>
+        <ion-card *ngFor="let post of postsList | orderBy: 'order'">
+          <ion-card-content>
+            <ion-item id="card-header">
+              <ion-avatar item-start>
+                <img src={{post.propic}}>
+              </ion-avatar>
+              {{post.description}}
+            </ion-item>
+            <ion-item class = "item item-block">
+              <button (click) = "iLikeIt(post.id, post.likes, post.order)">
+                <img src ="assets/imgs/thumbup.png">
+              </button>
+              <font size = "2">LIKES {{post.likes}}</font>
+              <button (click) = "myDislikes(post.id, post.dislikes)">
+                <img src ="assets/imgs/thumbdown.png">
+              </button>
+              <font size = "2">DISLIKES {{post.dislikes}}</font>
+            </ion-item>
+        
+          
+            <ion-item>
+              <ion-label>Privacy</ion-label>
+              <ion-select [(ngModel)]="privacy">
+                <ion-option value = "m">Only me</ion-option>
+                <ion-option value = "f">Only Followers</ion-option>
+                <ion-option value = "p">Public</ion-option>
+              </ion-select>
+            </ion-item>
+          </ion-card-content>
+        </ion-card>
+
+
+        <ion-fab right bottom>
+          <button ion-fab mini (click)="addPost()">
+            <ion-icon name="add" ></ion-icon>
+          </button>
+        </ion-fab>
+      </div>
+
+
+      <ng-template #showLogin>
+        <p>Please login.</p>
+        <button ion-button color="danger"  full (click)="login()" icon-right>
+          <ion-icon name="logo-googleplus"></ion-icon>
+          Login with Google
+        </button>
+      </ng-template>
+</ion-content>
