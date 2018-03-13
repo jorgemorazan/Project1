@@ -1,14 +1,18 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-      
+
       <ion-item class="item item-trns text-center">
           My Social App
         <ion-avatar item-end *ngIf="afAuth.authState | async">
           <img src={{currentUser.photoURL}}>
         </ion-avatar>
       </ion-item>
-      
+        <ion-fab center top>
+          <button ion-fab mini (click)="addPost()">
+            <ion-icon name="add" ></ion-icon>
+          </button>
+        </ion-fab>      
     </ion-title>
   </ion-navbar>
 </ion-header>
@@ -50,11 +54,7 @@
         </ion-card>
 
 
-        <ion-fab right bottom>
-          <button ion-fab mini (click)="addPost()">
-            <ion-icon name="add" ></ion-icon>
-          </button>
-        </ion-fab>
+
       </div>
 
 
