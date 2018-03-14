@@ -8,6 +8,8 @@ import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
 import { AngularFireAuth} from 'angularfire2/auth';
 import * as firebase from 'firebase/app';
 import { Observable } from '@firebase/util';
+import { NULL_EXPR } from '@angular/compiler/src/output/output_ast';
+import { isUndefined } from 'ionic-angular/util/util';
 
 @Component({
   selector: 'page-home',
@@ -16,6 +18,8 @@ import { Observable } from '@firebase/util';
 export class HomePage {
 
   currentUser:any;
+  currentUserRef: any;
+  cusers:AngularFireList<any>;
   postsRef:any;
   postsRef2: firebase.database.Reference;
   postsList: Array<any>;
@@ -29,6 +33,8 @@ export class HomePage {
     public afDatabase: AngularFireDatabase,
     public afAuth: AngularFireAuth
   ) {
+    this.currentUserRef = afDatabase.list('users');
+    this.cusers = this.currentUserRef.valueChanges();
     this.postsRef = afDatabase.list('posts');
     this.posts = this.postsRef.valueChanges();
 
@@ -49,7 +55,7 @@ export class HomePage {
         this.currentUser = null;
         return;
       }
-      this.currentUser = {uid:user.uid, photoURL: user.photoURL};
+      this.currentUser = {uid:user.uid, photoURL: user.photoURL, userName: user.displayName};
       
     });
   }
@@ -75,7 +81,8 @@ export class HomePage {
               dislikes:0,
               order: 999999,
               propic: this.currentUser.photoURL,
-              uid: this.currentUser.uid
+              uid: this.currentUser.uid,
+              userName: this.currentUser.userName
             });
           }
         }
@@ -147,6 +154,21 @@ export class HomePage {
     });
 
     console.log(q, this.postsList.length);
+  }
+
+  newFollow(userId, followUserId, followUsersList: Array<any>){
+    if(followUsersList == null){
+      let newList = [];
+      newList.push(followUserId);
+      this.currentUserRef.update(userId,{
+        following: newList
+      });
+    }else if(!followUsersList.find(follow => follow.uid == followUserId)){
+      followUsersList.push(followUserId);
+      this.currentUserRef.update(userId,{
+        following: followUsersList
+      });
+    }
   }
 
   loginWithEmail() {

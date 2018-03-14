@@ -18,18 +18,30 @@
 </ion-header>
 
 <ion-content padding>
+
     <div *ngIf="afAuth.authState | async as user; else showLogin">
+
         <h1>Hello {{ user.displayName }}!</h1>
+        
         <button ion-button color="dark"(click)="logout()">Logout</button>
+        
         <ion-searchbar (ionInput)="onInput($event)"></ion-searchbar>
+        
         <ion-card *ngFor="let post of postsList | orderBy: 'order'">
+          
           <ion-card-content>
+            
             <ion-item id="card-header">
               <ion-avatar item-start>
                 <img src={{post.propic}}>
               </ion-avatar>
+              <ion-item>
+                <button item-end (click) = "newFollow(user.uid, post.uid, user.following)">FOLLOW</button>
+              </ion-item>
+              <h1>{{post.userName}}</h1>
               {{post.description}}
             </ion-item>
+            
             <ion-item class = "item item-block">
               <button (click) = "iLikeIt(post.id, post.likes, post.order)">
                 <img src ="assets/imgs/thumbup.png">
@@ -40,8 +52,7 @@
               </button>
               <font size = "2">DISLIKES {{post.dislikes}}</font>
             </ion-item>
-        
-          
+            
             <ion-item>
               <ion-label>Privacy</ion-label>
               <ion-select [(ngModel)]="privacy">
@@ -50,13 +61,16 @@
                 <ion-option value = "p">Public</ion-option>
               </ion-select>
             </ion-item>
+          
           </ion-card-content>
+        
         </ion-card>
-
-
-
+      <ion-item class="item item-trns text-center">You're following:
+        <ion-card *ngFor="let user of cusers | async">
+          {{user.following}}
+        </ion-card>
+      </ion-item>
       </div>
-
 
       <ng-template #showLogin>
         <p>Please login.</p>
@@ -65,4 +79,5 @@
           Login with Google
         </button>
       </ng-template>
+
 </ion-content>
